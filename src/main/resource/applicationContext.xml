@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+           http://www.springframework.org/schema/task
+    	   http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+    <bean id="launcher" class="com.almond.way.server.LaunchMeServiceImp">
+    	<property name="systemName">
+    		<value>testing</value>
+    	</property>
+    </bean>
+    
+        <bean id="mysqlDataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://127.0.0.1:3306/way?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
+            </value>
+        </property>
+        <property name="username">
+            <value>root</value>
+        </property>
+        <property name="password">
+            <value>root</value>
+        </property>
+    </bean>   
+	<bean id="userDao" class="com.almond.way.server.LoginUserDao">  
+       <property name="dataSource" ref="mysqlDataSource" />  
+    </bean> 
+    
+    <!-- 配置connectionFactory -->  
+    <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+        destroy-method="stop">  
+        <property name="connectionFactory">  
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">  
+                <property name="brokerURL">  
+                    <value>tcp://127.0.0.1:61616</value>  
+                </property>  
+            </bean>  
+        </property>  
+        <property name="maxConnections">
+        	<value>100</value>
+        </property>  
+    </bean>  
+  
+    <!-- Spring JMS Template -->  
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">  
+        <property name="connectionFactory" ref="jmsFactory">  
+<!--             <ref local="jmsFactory" />   -->
+        </property>  
+        <property name="defaultDestinationName" value="subject" />  
+        <!-- 区别它采用的模式为false是p2p, 为true是订阅 -->  
+        <property name="pubSubDomain" value="false" />  
+    </bean>  
+  
+    <!-- 发送消息的目的地（一个队列） -->  
+    <!-- <bean id="destination" class="org.apache.activemq.command.ActiveMQTopic"> -->
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- 设置消息队列的名字 -->  
+        <constructor-arg index="0" value="subject" />  
+    </bean>  
+  
+    <!-- 消息监听     -->  
+    <bean id="listenerContainer"  
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">  
+        <!-- <property name="concurrentConsumers" value="10" /> -->  
+        <property name="connectionFactory" ref="jmsFactory" />  
+        <property name="destinationName" value="subject" />  
+        <property name="messageListener" ref="messageReceiver" />  
+        <!-- <property name="pubSubNoLocal" value="false"></property> -->  
+    </bean>
+    
+    <bean id="redisUtil" class="com.almond.way.server.RedisUtil">
+    </bean>
+    
+    <bean id="messagePublisher"
+    	class="com.almond.way.server.Publisher">
+<!--     	<constructor-arg index="0" ref="jmsTemplate">
+    	</constructor-arg>
+    	<constructor-arg index="1" ref="destination"> -->
+    	<property name="jmsTemplate" ref="jmsTemplate" />  
+        <property name="destination" ref="destination" />
+    	<!-- </constructor-arg> -->
+    </bean>
+  
+	<bean id="messageReceiver"
+        class="com.almond.way.server.MessageReceiver">  
+        <property name="jmsTemplate" ref="jmsTemplate" />
+        <property name="destination" ref="destination" />
+        <property name="userDao" ref="userDao" />
+        <property name="redisUtil" ref="redisUtil" />
+    </bean>
+    
+ 
+    
+</beans>

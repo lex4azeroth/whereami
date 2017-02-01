@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.almond.way.dao.IDeviceInfoDao">  
+<select id="getDeviceInfo" parameterType="com.almond.way.model.DeviceInfo" resultType="com.almond.way.model.DeviceInfo">  
+    SELECT * FROM WAY_LAL WHERE EQU_ID=#{androidID} AND TIMESTAMP=#{date}  
+</select>  
+<insert id="addDeviceInfo" parameterType="com.almond.way.model.DeviceInfo" flushCache="true">  
+   INSERT INTO WAY_LAL (EQU_ID,LATITUDE,LONGITUDE,TIMESTAMP) VALUES (#{androidID},#{latitude},#{longitude},#{date})  
+</insert>  
+<!-- <update id="updateUser" parameterType="com.springMyBatis.system.model.User">  
+    UPDATE user SET password=#{password} WHERE id=#{id}  
+</update>  
+<delete id="deleteUser" parameterType="int">  
+    DELETE FROM user WHERE id=#{id}  
+</delete>   -->
+</mapper>

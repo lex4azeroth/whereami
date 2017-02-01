@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+           http://www.springframework.org/schema/task
+    	   http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+    
+    <context:annotation-config/>  
+    <context:component-scan base-package="com.almond.way"/>  
+
+    <bean id="mysqlDataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://127.0.0.1:3306/way?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
+            </value>
+        </property>
+        <property name="username">
+            <value>root</value>
+        </property>
+        <property name="password">
+            <value>root</value>
+        </property>
+    </bean>   
+
+	<!--<bean id="userDao" class="com.almond.way.server.LoginUserDao">  
+       <property name="dataSource" ref="mysqlDataSource" />  
+    </bean>  -->
+    
+     <bean id="redisUtil" class="com.almond.way.utils.RedisUtil">
+    </bean>
+
+    <!-- 配置connectionFactory -->  
+    <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+        destroy-method="stop">  
+        <property name="connectionFactory">  
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">  
+                <property name="brokerURL">  
+                    <value>tcp://127.0.0.1:61616</value>  
+                </property>
+                <property name="trustedPackages">
+                    <list>
+                        <value>com.almond.way.model</value>
+                    </list>
+                </property>
+            </bean>  
+        </property>  
+        <property name="maxConnections">
+        	<value>100</value>
+        </property>  
+    </bean>  
+  
+    <!-- Spring JMS Template -->  
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">  
+        <property name="connectionFactory" ref="jmsFactory">  
+<!--             <ref local="jmsFactory" />   -->
+        </property>  
+        <property name="defaultDestinationName" value="subject" />  
+        <!-- 区别它采用的模式为false是p2p, 为true是订阅 -->  
+        <property name="pubSubDomain" value="false" />
+        <!-- 消息转换器 -->  
+        <property name="messageConverter" ref="deviceInfoMessageConverter"/>   
+    </bean>  
+  
+    <!-- 发送消息的目的地（一个队列） -->  
+    <!-- <bean id="destination" class="org.apache.activemq.command.ActiveMQTopic"> -->
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- 设置消息队列的名字 -->  
+        <constructor-arg index="0" value="subject" />  
+    </bean>  
+  
+    <!-- 消息监听     -->  
+    <!--<bean id="listenerContainer"  
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">  -->
+        <!-- <property name="concurrentConsumers" value="10" /> -->  
+        <!--
+        <property name="connectionFactory" ref="jmsFactory" />  
+        <property name="destinationName" value="subject" />  
+        <property name="messageListener" ref="messageReceiver" />  
+        -->
+        <!-- <property name="pubSubNoLocal" value="false"></property> -->  
+    <!--
+    </bean>
+    -->
+
+    <bean id="messagePublisher"
+    	class="com.almond.way.service.impl.PublisherServiceImpl">
+<!--     	<constructor-arg index="0" ref="jmsTemplate">
+    	</constructor-arg>
+    	<constructor-arg index="1" ref="destination"> -->
+    	<!--<property name="jmsTemplate" ref="jmsTemplate" />  
+        <property name="destination" ref="destination" />-->
+    	<!-- </constructor-arg> -->
+    </bean>
+  
+	<!--<bean id="messageReceiver"
+        class="com.almond.way.server.MessageReceiver">  
+        <property name="jmsTemplate" ref="jmsTemplate" />
+        <property name="destination" ref="destination" />
+        <property name="redisUtil" ref="redisUtil" />
+    </bean>-->
+
+<!-- 配置消息队列监听者（Queue），代码下面给出，只有一个onMessage方法 -->
+	<bean id="queueMessageListener" class="com.almond.way.utils.QueueMessageListener" />
+	
+	<!-- 消息监听容器（Queue），配置连接工厂，监听的队列是queue2，监听器是上面定义的监听器 -->
+	<bean id="jmsContainer"
+		class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="jmsFactory" />
+		<property name="destination" ref="destination" />
+		<property name="messageListener" ref="queueMessageListener" />
+	</bean>
+
+    <!-- 引入配置文件 -->  
+    <!--<bean id="propertyConfigurer"  
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="location" value="WEB-INF/jdbc.properties" />  
+    </bean>  -->
+  
+    <!--mybatis config-->
+  
+    <!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->  
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">  
+        <property name="dataSource" ref="mysqlDataSource" />
+        <!--<property name="configLocation" value="WEB-INF/mybatis-config.xml"></property>  -->
+        <!-- 自动扫描mapping.xml文件 -->  
+        <property name="mapperLocations" value="WEB-INF/mapping/*.xml"></property>  
+    </bean>
+
+  
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.almond.way.dao" />  
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>  
+    </bean>  
+  
+    <!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->  
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="mysqlDataSource" />  
+    </bean>
+    
+</beans>
