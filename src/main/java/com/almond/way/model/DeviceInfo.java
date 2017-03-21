@@ -14,7 +14,7 @@ public class DeviceInfo implements Serializable {
 	private String androidID;
 	private String latitude;
 	private String longitude;
-	private String date;
+	private String dateTime;
 	
 	public final static String SEPARATOR = ";";
 	
@@ -43,11 +43,11 @@ public class DeviceInfo implements Serializable {
 	}
 	
 	public String getDate() {
-		return date;
+		return dateTime;
 	}
 	
 	public void setDate(String dateTime) {
-		this.date = dateTime;
+		this.dateTime = dateTime;
 	}
 	
 	public int getId() {

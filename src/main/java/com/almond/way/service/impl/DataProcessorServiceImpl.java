@@ -21,9 +21,9 @@ public class DataProcessorServiceImpl implements IDataProcessorService {
 	}
 
 	@Override
-	public String processDeviceLocation(DeviceInfo deviceInfo) {
+	public void processDeviceLocation(DeviceInfo deviceInfo) {
 		deviceInfoDao.addDeviceInfo(deviceInfo);
-		DeviceInfo retrievedDevice = deviceInfoDao.getDeviceInfo(deviceInfo);
-		return retrievedDevice.getAndroidID();
+//		DeviceInfo retrievedDevice = deviceInfoDao.getDeviceInfo(deviceInfo);
+//		return retrievedDevice.getAndroidID();
 	}
 }

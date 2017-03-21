@@ -6,7 +6,7 @@
     SELECT * FROM LOGIN_USR WHERE id=#{id} AND pwd=#{pwd}  
 </select>  
 <insert id="addLoginUser" parameterType="com.almond.way.model.LoginUser" flushCache="true">  
-   INSERT LOGIN_USR user (id,pwd,alias) VALUES (#{id},#{pwd},#{alias})  
+   INSERT INTO LOGIN_USR (id,pwd,alias) VALUES (#{id},#{pwd},#{alias})  
 </insert>  
 <!-- <update id="updateUser" parameterType="com.springMyBatis.system.model.User">  
     UPDATE user SET password=#{password} WHERE id=#{id}  

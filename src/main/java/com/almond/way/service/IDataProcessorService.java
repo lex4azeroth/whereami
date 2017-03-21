@@ -6,6 +6,6 @@ public interface IDataProcessorService {
 	
 	boolean processData(String dataInString);
 	
-	String processDeviceLocation(DeviceInfo deviceInfo);
+	void processDeviceLocation(DeviceInfo deviceInfo);
 
 }

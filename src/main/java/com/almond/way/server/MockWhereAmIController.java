@@ -18,8 +18,8 @@ public class MockWhereAmIController {
 
 	private static Logger logger = Logger.getLogger(MockWhereAmIController.class.getName());
 	
-	@RequestMapping(value="/")
-	public String homeSweetHome() {
+	@RequestMapping(value="/mockhome")
+	public String mocHomeSweetHome() {
 		return "index";
 	}
 	

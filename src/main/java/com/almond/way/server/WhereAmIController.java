@@ -1,6 +1,9 @@
 package com.almond.way.server;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.almond.way.model.DeviceInfo;
+import com.almond.way.model.DeviceLoL;
 import com.almond.way.model.LoginUser;
+import com.almond.way.service.IDeviceInfoService;
 import com.almond.way.service.ILoginUserService;
 import com.almond.way.service.IPublisherService;
 
@@ -31,6 +36,10 @@ public class WhereAmIController {
 	@Autowired
 	@Qualifier("loginUserServiceImpl")
 	private ILoginUserService loginUserService;
+	
+	@Autowired
+	@Qualifier("deviceInfoServiceImpl")
+	private IDeviceInfoService deviceInfoService;
 
 	@RequestMapping(value="/")
 	public String homeSweetHome() {
@@ -68,6 +77,15 @@ public class WhereAmIController {
 		String returnValue = String.format("%d records POSTED", index);
 		logger.info("RETURN VALUE: " + returnValue);
 		return returnValue;
+	}
+	
+	@RequestMapping(value="/ihavebeen", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<DeviceLoL> getDeviceLals() {
+		logger.info("i have been...");
+		List<DeviceLoL> deviceLoLs = deviceInfoService.getDeviceLalInfo("7bbd793805f2ba1d", "2017-02-12 02:09:51", "2017-02-12 02:56:59");
+		Map<String, String> map = new HashMap<String, String>();
+		return deviceLoLs;
 	}
 	
 	@RequestMapping(value="/testmylocation", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE) 

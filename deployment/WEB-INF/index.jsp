@@ -10,19 +10,37 @@ request.setAttribute("home", path);
 <link rel="stylesheet" type="text/css" href="../css/bmap.css"/>
 <script type="text/javascript">
 function showMap() {
-var map = new BMap.Map("container",{mapType: BMAP_NORMAL_MAP});      //设置卫星图为底图
-var point = new BMap.Point(121.48,31.22);    // 创建点坐标
-map.centerAndZoom(point,12);                     // 初始化地图,设置中心点坐标和地图级别。
+var map = new BMap.Map("container",{mapType: BMAP_SATELLITE_MAP});      //设置卫星图为底图
+var point = new BMap.Point(121.329492,31.284172);    // 创建点坐标
+map.centerAndZoom(point,19);                     // 初始化地图,设置中心点坐标和地图级别。
+
+//var startpoint = new BMap.Point(121.329492, 31.284172);
+//var endpoint = new BMap.Point(121.321731,31.283431);
+//var walking = new BMap.WalkingRoute(map, {renderOptions:{map: map, autoViewport: true}});
+//walking.search(startpoint, endpoint);
+
+var polyline = new BMap.Polyline([
+  new BMap.Point(121.329492,31.284172),
+  new BMap.Point(121.326043,31.285406),
+  new BMap.Point(121.320725,31.286394),
+  new BMap.Point(121.315478,31.288245),
+  new BMap.Point(121.30592,31.288863),
+  new BMap.Point(121.308867,31.28627),
+  new BMap.Point(121.315478,31.284851),
+  new BMap.Point(121.321443,31.282691),
+  new BMap.Point(121.331504,31.280839)
+], {strokeColor:"red", strokeWeight:2, strokeOpacity:0.5});
+map.addOverlay(polyline);
 
 //map.addControl(new BMap.MapTypeControl());
 map.addControl(new BMap.NavigationControl());
-map.enableScrollWheelZoom();                  // 启用滚轮放大缩小。
+//map.enableScrollWheelZoom();                  // 启用滚轮放大缩小。
 //map.enableKeyboard();                         // 启用键盘操作。  
 //map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
 var marker = new BMap.Marker(point);
-	map.addOverlay(marker);               // 将标注添加到地图中
-	marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
-map.addOverlay(marker); 
+map.addOverlay(marker);               // 将标注添加到地图中
+marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+//map.addOverlay(marker); 
 }
 
 function postData() {
@@ -72,7 +90,7 @@ function postData() {
 <!--<script type="text/javascript" src='<c:url value="/WEB-INF/plugins/jQuery/jQuery-2.2.0.min.js"></c:url>'></script>-->
 <script type="text/javascript" src="${home}/js/jQuery-2.2.0.min.js"></script>
 <script type="text/javascript" src="${home}/js/json2.js"></script>
-<script type="text/javascript" src="${home}/js/apiv1.3.min.js"></script>
+<script type="text/javascript" src="${home}/js/apiv1.3.js"></script>
 <!--<script type="text/javascript" src='<c:url value="/plugins/jQuery/jQuery-2.2.0.min.js"></c:url>'></script>-->
 <!--<script type="text/javascript" src='<c:url value="/js/jQuery-2.2.0.min.js"></c:url>'></script>-->
 
