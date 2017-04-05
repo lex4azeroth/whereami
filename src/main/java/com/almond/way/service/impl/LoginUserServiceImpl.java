@@ -20,7 +20,6 @@ public class LoginUserServiceImpl implements ILoginUserService {
 		user.setId(id);
 		user.setPwd(pwd);
 		return loginUserDao.getLoginUser(user);
-//		return user;
 	}
 
 }

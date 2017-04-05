@@ -42,16 +42,5 @@ public class PublisherServiceImpl implements IPublisherService {
 		String text = String.format("POST:[%s]", deviceInfo.toString());
 		logger.info(text);	
 		jmsTemplate.convertAndSend(destination, deviceInfo);
-		
-//		jmsTemplate.send(destination, new MessageCreator() {
-//
-//			@Override
-//			public Message createMessage(Session session) throws JMSException {
-//				String text = String.format("POST:[%s]", deviceInfo.toString());
-//				logger.info(text);		
-//				return session.createObjectMessage(deviceInfo);
-////				return session.createTextMessage(deviceInfo.toString());
-//			}
-//		});	
 	}
 }

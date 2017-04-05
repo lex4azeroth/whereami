@@ -18,8 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.almond.way.model.DeviceInfo;
 import com.almond.way.model.DeviceLoL;
+import com.almond.way.model.Equipment;
 import com.almond.way.model.LoginUser;
 import com.almond.way.service.IDeviceInfoService;
+import com.almond.way.service.IEquipmentService;
 import com.almond.way.service.ILoginUserService;
 import com.almond.way.service.IPublisherService;
 
@@ -40,6 +42,10 @@ public class WhereAmIController {
 	@Autowired
 	@Qualifier("deviceInfoServiceImpl")
 	private IDeviceInfoService deviceInfoService;
+	
+	@Autowired
+	@Qualifier("equipmentServiceImpl")
+	private IEquipmentService equipmentService;
 
 	@RequestMapping(value="/")
 	public String homeSweetHome() {
@@ -94,5 +100,12 @@ public class WhereAmIController {
 		logger.info("postTestDeviceLocation...");
 		
 		return String.format("posted device [%s]", deviceInfos.toString());
+	}
+	
+	@RequestMapping(value="/equipments", method=RequestMethod.GET, consumes=MediaType.APPLICATION_JSON_VALUE)
+	public List<Equipment> getEquipmentList() {
+		logger.info("getting equipment list...");
+
+		return equipmentService.getEquipmentList();
 	}
 }

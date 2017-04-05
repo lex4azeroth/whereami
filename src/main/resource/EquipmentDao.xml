@@ -4,7 +4,10 @@
 <mapper namespace="com.almond.way.dao.IEquipmentDao">  
 <insert id="registDevice" parameterType="com.almond.way.model.Equipment" flushCache="true">  
    INSERT INTO WAY_EQU (EQU_ID,EQU_NAME) VALUES (#{equipmentId},#{equipmentName})  
-</insert>  
+</insert>
+<select id="getDeviceList" resultType="com.almond.way.model.Equipment" parameterType="HashMap">  
+    SELECT * FROM WAY_EQU
+</select> 
 <!-- <update id="updateUser" parameterType="com.springMyBatis.system.model.User">  
     UPDATE user SET password=#{password} WHERE id=#{id}  
 </update>  
