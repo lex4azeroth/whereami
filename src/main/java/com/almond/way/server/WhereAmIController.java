@@ -89,7 +89,18 @@ public class WhereAmIController {
 	@ResponseBody
 	public List<DeviceLoL> getDeviceLals() {
 		logger.info("i have been...");
-		List<DeviceLoL> deviceLoLs = deviceInfoService.getDeviceLalInfo("7bbd793805f2ba1d", "2017-02-12 02:09:51", "2017-02-12 02:56:59");
+//		List<DeviceLoL> deviceLoLs = deviceInfoService.getDeviceLalInfo("7bbd793805f2ba1d", "2017-02-12 02:09:51", "2017-02-12 02:56:59");
+		List<DeviceLoL> deviceLoLs = deviceInfoService.getDeviceLalInfo("7bbd793805f2ba1d", "2017-04-08 04:51", "2017-04-08 04:58");
+		Map<String, String> map = new HashMap<String, String>();
+		return deviceLoLs;
+	}
+	
+	@RequestMapping(value="/ihavebeen2", method=RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<DeviceLoL> getDeviceLals2() {
+		logger.info("i have been...");
+//		List<DeviceLoL> deviceLoLs = deviceInfoService.getDeviceLalInfo("7bbd793805f2ba1d", "2017-02-12 02:09:51", "2017-02-12 02:56:59");
+		List<DeviceLoL> deviceLoLs = deviceInfoService.getDeviceLalInfo("815683fda35de8d5", "2017-04-08 04:51", "2017-04-08 04:58");
 		Map<String, String> map = new HashMap<String, String>();
 		return deviceLoLs;
 	}

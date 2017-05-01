@@ -31,13 +31,13 @@ public class DataProcessorServiceImpl implements IDataProcessorService {
 	@Override
 	public void processDeviceLocation(DeviceInfo deviceInfo) {
 		
-		if (!equipmentService.isEquipmentRegisted(deviceInfo.getAndroidID())) {
-			Equipment equ = new Equipment();
-			equ.setEquipmentId(deviceInfo.getAndroidID());
-			String defaultName = String.format("default_name_%s", deviceInfo.getAndroidID());
-			equ.setEquipmentName(defaultName);
-			equipmentService.registEquipment(equ);
-		}
+//		if (!equipmentService.isEquipmentRegisted(deviceInfo.getAndroidID())) {
+//			Equipment equ = new Equipment();
+//			equ.setEquipmentId(deviceInfo.getAndroidID());
+//			String defaultName = String.format("default_name_%s", deviceInfo.getAndroidID());
+//			equ.setEquipmentName(defaultName);
+//			equipmentService.registEquipment(equ);
+//		}
 		
 		deviceInfoDao.addDeviceInfo(deviceInfo);
 	}
